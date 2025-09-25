@@ -1,0 +1,152 @@
+Initialized native services in: /Users/alinatsrkova/.gradle/native
+Initialized jansi services in: /Users/alinatsrkova/.gradle/native
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Starting process 'Gradle build daemon'. Working directory: /Users/alinatsrkova/.gradle/daemon/8.14.3 Command: /Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home/bin/java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED -XX:MaxMetaspaceSize=384m -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.country=RU -Duser.language=ru -Duser.variant -cp /Users/alinatsrkova/.gradle/wrapper/dists/gradle-8.14.3-bin/cv11ve7ro1n3o1j4so8xd9n66/gradle-8.14.3/lib/gradle-daemon-main-8.14.3.jar -javaagent:/Users/alinatsrkova/.gradle/wrapper/dists/gradle-8.14.3-bin/cv11ve7ro1n3o1j4so8xd9n66/gradle-8.14.3/lib/agents/gradle-instrumentation-agent-8.14.3.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 8.14.3
+Successfully started process 'Gradle build daemon'
+An attempt to start the daemon took 0.677 secs.
+The client will now receive all logging from the daemon (pid: 66669). The daemon log file: /Users/alinatsrkova/.gradle/daemon/8.14.3/daemon-66669.out.log
+Daemon will be stopped at the end of the build 
+Using 8 worker leases.
+Received JVM installation metadata from '/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home': {JAVA_HOME=/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home, JAVA_VERSION=21.0.7, JAVA_VENDOR=Eclipse Adoptium, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=21.0.7+6-LTS, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=21.0.7+6-LTS, VM_VENDOR=Eclipse Adoptium, OS_ARCH=aarch64}
+Watching the file system is configured to be enabled if available
+Now considering [/Users/alinatsrkova/taskmanager/taskmanager] as hierarchies to watch
+File system watching is active
+Starting Build
+Settings evaluated using settings file '/Users/alinatsrkova/taskmanager/taskmanager/settings.gradle'.
+Projects loaded. Root project using build file '/Users/alinatsrkova/taskmanager/taskmanager/build.gradle'.
+Included projects: [root project 'taskmanager']
+
+> Configure project :
+Evaluating root project 'taskmanager' using build file '/Users/alinatsrkova/taskmanager/taskmanager/build.gradle'.
+Resolved plugin [id: 'java']
+Resolved plugin [id: 'org.springframework.boot', version: '3.5.6']
+Resolved plugin [id: 'io.spring.dependency-management', version: '1.1.7']
+Applying dependency management to configuration 'annotationProcessor' in project 'taskmanager'
+Applying dependency management to configuration 'apiElements' in project 'taskmanager'
+Applying dependency management to configuration 'archives' in project 'taskmanager'
+Applying dependency management to configuration 'bootArchives' in project 'taskmanager'
+Applying dependency management to configuration 'compileClasspath' in project 'taskmanager'
+Applying dependency management to configuration 'compileOnly' in project 'taskmanager'
+Applying dependency management to configuration 'default' in project 'taskmanager'
+Applying dependency management to configuration 'developmentOnly' in project 'taskmanager'
+Applying dependency management to configuration 'implementation' in project 'taskmanager'
+Applying dependency management to configuration 'mainSourceElements' in project 'taskmanager'
+Applying dependency management to configuration 'productionRuntimeClasspath' in project 'taskmanager'
+Applying dependency management to configuration 'runtimeClasspath' in project 'taskmanager'
+Applying dependency management to configuration 'runtimeElements' in project 'taskmanager'
+Applying dependency management to configuration 'runtimeOnly' in project 'taskmanager'
+Applying dependency management to configuration 'testAndDevelopmentOnly' in project 'taskmanager'
+Applying dependency management to configuration 'testAnnotationProcessor' in project 'taskmanager'
+Applying dependency management to configuration 'testCompileClasspath' in project 'taskmanager'
+Applying dependency management to configuration 'testCompileOnly' in project 'taskmanager'
+Applying dependency management to configuration 'testImplementation' in project 'taskmanager'
+Applying dependency management to configuration 'testResultsElementsForTest' in project 'taskmanager'
+Applying dependency management to configuration 'testRuntimeClasspath' in project 'taskmanager'
+Applying dependency management to configuration 'testRuntimeOnly' in project 'taskmanager'
+All projects evaluated.
+Task name matched 'clean'
+Task name matched 'build'
+Selected primary task 'clean' from project :
+Selected primary task 'build' from project :
+Resolving global dependency management for project 'taskmanager'
+Excluding []
+Excluding []
+Excluding []
+Starting process 'command '/usr/libexec/java_home''. Working directory: /Users/alinatsrkova/.gradle/daemon/8.14.3 Command: /usr/libexec/java_home -V
+Successfully started process 'command '/usr/libexec/java_home''
+Excluding []
+Excluding []
+Tasks to be executed: [task ':clean', task ':compileJava', task ':processResources', task ':classes', task ':resolveMainClassName', task ':bootJar', task ':jar', task ':assemble', task ':check', task ':build']
+Tasks that were excluded: [task ':test']
+Resolve mutations for :clean (Thread[#151,Execution worker Thread 2,5,main]) started.
+:clean (Thread[#151,Execution worker Thread 2,5,main]) started.
+destroyer locations for task group 0 (Thread[#149,included builds,5,main]) started.
+
+> Task :clean
+Caching disabled for task ':clean' because:
+  Build cache is disabled
+Task ':clean' is not up-to-date because:
+  Task has not declared any outputs despite executing actions.
+Resolve mutations for :compileJava (Thread[#151,Execution worker Thread 2,5,main]) started.
+:compileJava (Thread[#151,Execution worker Thread 2,5,main]) started.
+
+> Task :compileJava
+Custom actions are attached to task ':compileJava'.
+Caching disabled for task ':compileJava' because:
+  Build cache is disabled
+Task ':compileJava' is not up-to-date because:
+  Output property 'destinationDirectory' file /Users/alinatsrkova/taskmanager/taskmanager/build/classes/java/main has been removed.
+  Output property 'destinationDirectory' file /Users/alinatsrkova/taskmanager/taskmanager/build/classes/java/main/com has been removed.
+  Output property 'destinationDirectory' file /Users/alinatsrkova/taskmanager/taskmanager/build/classes/java/main/com/alina has been removed.
+  and more...
+The input changes require a full rebuild for incremental task ':compileJava'.
+Compilation mode: in-process compilation
+Full recompilation is required because no incremental change information is available. This is usually caused by clean builds or changing compiler arguments.
+Compiling with toolchain '/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home'.
+Compiling with JDK Java compiler API.
+Class dependency analysis for incremental compilation took 0.014 secs.
+Created classpath snapshot for incremental compilation in 0.062 secs.
+Resolve mutations for :processResources (Thread[#154,Execution worker Thread 5,5,main]) started.
+:processResources (Thread[#154,Execution worker Thread 5,5,main]) started.
+
+> Task :processResources
+Caching disabled for task ':processResources' because:
+  Build cache is disabled
+  Not worth caching
+Task ':processResources' is not up-to-date because:
+  Output property 'destinationDir' file /Users/alinatsrkova/taskmanager/taskmanager/build/resources/main has been removed.
+  Output property 'destinationDir' file /Users/alinatsrkova/taskmanager/taskmanager/build/resources/main/application.properties has been removed.
+  Output property 'destinationDir' file /Users/alinatsrkova/taskmanager/taskmanager/build/resources/main/static has been removed.
+  and more...
+Resolve mutations for :classes (Thread[#154,Execution worker Thread 5,5,main]) started.
+:classes (Thread[#154,Execution worker Thread 5,5,main]) started.
+
+> Task :classes
+Skipping task ':classes' as it has no actions.
+Resolve mutations for :resolveMainClassName (Thread[#154,Execution worker Thread 5,5,main]) started.
+:resolveMainClassName (Thread[#154,Execution worker Thread 5,5,main]) started.
+
+> Task :resolveMainClassName
+Caching disabled for task ':resolveMainClassName' because:
+  Build cache is disabled
+  Not worth caching
+Task ':resolveMainClassName' is not up-to-date because:
+  Output property 'outputFile' file /Users/alinatsrkova/taskmanager/taskmanager/build/resolvedMainClassName has been removed.
+Resolve mutations for :bootJar (Thread[#155,Execution worker Thread 6,5,main]) started.
+:bootJar (Thread[#155,Execution worker Thread 6,5,main]) started.
+
+> Task :bootJar
+Excluding []
+Caching disabled for task ':bootJar' because:
+  Build cache is disabled
+  Not worth caching
+Task ':bootJar' is not up-to-date because:
+  Output property 'archiveFile' file /Users/alinatsrkova/taskmanager/taskmanager/build/libs/taskmanager-0.0.1-SNAPSHOT.jar has been removed.
+Resolve mutations for :jar (Thread[#155,Execution worker Thread 6,5,main]) started.
+:jar (Thread[#155,Execution worker Thread 6,5,main]) started.
+
+> Task :jar
+Caching disabled for task ':jar' because:
+  Build cache is disabled
+  Not worth caching
+Task ':jar' is not up-to-date because:
+  Output property 'archiveFile' file /Users/alinatsrkova/taskmanager/taskmanager/build/libs/taskmanager-0.0.1-SNAPSHOT-plain.jar has been removed.
+Resolve mutations for :assemble (Thread[#155,Execution worker Thread 6,5,main]) started.
+:assemble (Thread[#155,Execution worker Thread 6,5,main]) started.
+
+> Task :assemble
+Skipping task ':assemble' as it has no actions.
+Resolve mutations for :check (Thread[#155,Execution worker Thread 6,5,main]) started.
+:check (Thread[#155,Execution worker Thread 6,5,main]) started.
+
+> Task :check
+Skipping task ':check' as it has no actions.
+Resolve mutations for :build (Thread[#155,Execution worker Thread 6,5,main]) started.
+:build (Thread[#155,Execution worker Thread 6,5,main]) started.
+
+> Task :build
+Skipping task ':build' as it has no actions.
+
+BUILD SUCCESSFUL in 4s
+6 actionable tasks: 6 executed
+Watched directory hierarchies: [/Users/alinatsrkova/taskmanager/taskmanager]
