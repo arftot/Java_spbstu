@@ -1,5 +1,6 @@
 package com.alina.taskmanager.config;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -8,13 +9,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -23,13 +26,26 @@ import java.util.Map;
 @Configuration
 @EnableCaching
 @Profile("redis")
+@EnableConfigurationProperties(RedisProperties.class)
 public class RedisCacheConfig {
+    private static final Logger logger = LoggerFactory.getLogger(RedisCacheConfig.class);
+    
+    private final RedisProperties redisProperties;
+
+    public RedisCacheConfig(RedisProperties redisProperties) {
+        this.redisProperties = redisProperties;
+    }
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        JedisConnectionFactory factory = new JedisConnectionFactory();
-        factory.setHostName("redis");
-        factory.setPort(6379);
+        String host = redisProperties.getHost();
+        int port = redisProperties.getPort();
+        
+        logger.info("Configuring Redis connection to {}:{}", host, port);
+        
+        LettuceConnectionFactory factory = new LettuceConnectionFactory(host, port);
+        factory.afterPropertiesSet();
+        
         return factory;
     }
 

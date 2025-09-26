@@ -20,14 +20,18 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("scheduling")
+@ActiveProfiles("test")
 @TestPropertySource(properties = {
     "scheduler.fixedDelay.ms=1000",
     "scheduler.initialDelay.ms=100",
     "spring.datasource.url=jdbc:h2:mem:testdb",
     "spring.datasource.driver-class-name=org.h2.Driver",
     "spring.jpa.hibernate.ddl-auto=create-drop",
-    "spring.flyway.enabled=false"
+    "spring.flyway.enabled=true",
+    "spring.flyway.locations=classpath:db/migration",
+    "spring.redis.host=localhost",
+    "spring.redis.port=6379",
+    "spring.cache.type=simple"
 })
 class SchedulingIntegrationTest {
 

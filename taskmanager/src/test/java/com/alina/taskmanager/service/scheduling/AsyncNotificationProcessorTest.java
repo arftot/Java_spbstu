@@ -41,14 +41,16 @@ class AsyncNotificationProcessorTest {
     }
 
     @Test
-    void processNotificationAsync_WithNullNotification_ShouldHandleGracefully() throws Exception {
+    void processNotificationAsync_WithNullNotification_ShouldReturnFailedFuture() throws Exception {
         // When
         CompletableFuture<Void> future = asyncNotificationProcessor.processNotificationAsync(null);
 
         // Then
         assertNotNull(future);
-        // Should complete with exception
-        assertThrows(Exception.class, () -> future.get(5, TimeUnit.SECONDS));
+        assertTrue(future.isCompletedExceptionally());
+        
+        // Should complete with exception when getting result
+        assertThrows(java.util.concurrent.ExecutionException.class, () -> future.get(5, TimeUnit.SECONDS));
     }
 
     @Test

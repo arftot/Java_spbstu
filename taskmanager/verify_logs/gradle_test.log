@@ -1,0 +1,108 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Task :compileJava
+
+> Task :processResources
+> Task :classes
+> Task :compileTestJava UP-TO-DATE
+> Task :processTestResources NO-SOURCE
+> Task :testClasses UP-TO-DATE
+
+> Task :test
+
+TaskmanagerApplicationTests > contextLoads() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:180
+        Caused by: org.springframework.beans.factory.BeanCreationException at AbstractBeanFactory.java:328
+            Caused by: org.springframework.beans.factory.BeanCreationException at AbstractAutowireCapableBeanFactory.java:1826
+                Caused by: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateException at DbMigrate.java:382
+                    Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException at DefaultSqlScriptExecutor.java:267
+                        Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException at DbException.java:514
+
+
+> Task :test
+
+TaskServiceDbIntegrationTest > getPendingTasksByUser_ShouldReturnPendingTasks_WhenUserHasPendingTasks() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:180
+        Caused by: org.springframework.beans.factory.BeanCreationException at AbstractBeanFactory.java:328
+            Caused by: org.springframework.beans.factory.BeanCreationException at AbstractAutowireCapableBeanFactory.java:1826
+                Caused by: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateException at DbMigrate.java:382
+                    Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException at DefaultSqlScriptExecutor.java:267
+                        Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException at DbException.java:514
+
+TaskServiceDbIntegrationTest > getTasksByUser_ShouldReturnSavedTasks_WhenUserHasTasks() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+TaskServiceDbIntegrationTest > createTask_ShouldSaveToDatabase_WhenValidRequest() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+TaskServiceDbIntegrationTest > deleteTask_ShouldMarkAsDeleted_WhenTaskExists() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringNotificationJpaRepositoryTest > save_ShouldReturnSavedNotification() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:180
+        Caused by: org.springframework.beans.factory.BeanCreationException at AbstractBeanFactory.java:328
+            Caused by: org.springframework.beans.factory.BeanCreationException at AbstractAutowireCapableBeanFactory.java:1826
+                Caused by: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateException at DbMigrate.java:382
+                    Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException at DefaultSqlScriptExecutor.java:267
+                        Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException at DbException.java:514
+
+SpringNotificationJpaRepositoryTest > findPendingByUserIdAndNotDeleted_ShouldReturnUnreadNotifications() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringNotificationJpaRepositoryTest > findByUserIdAndNotDeleted_ShouldReturnNotifications_WhenUserHasNotifications() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringTaskJpaRepositoryTest > findById_ShouldReturnTask_WhenExists() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringTaskJpaRepositoryTest > save_ShouldReturnSavedTask() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringTaskJpaRepositoryTest > findByUserIdAndStatusAndNotDeleted_ShouldReturnPendingTasks() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringTaskJpaRepositoryTest > findByUserIdAndNotDeleted_ShouldReturnTasks_WhenUserHasTasks() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringUserJpaRepositoryTest > findByUsername_ShouldReturnUser_WhenExists() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringUserJpaRepositoryTest > save_ShouldReturnSavedUser() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+SpringUserJpaRepositoryTest > findById_ShouldReturnUser_WhenExists() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:145
+
+TaskServiceCacheTest > createTask_ShouldCreateTask() FAILED
+    java.lang.NullPointerException at TaskServiceCacheTest.java:106
+
+TaskServiceTest > createTask_ShouldCreateAndReturnTask_WhenValidRequest() FAILED
+    java.lang.NullPointerException at TaskServiceTest.java:91
+
+TaskServiceTest > createTask_ShouldSetCorrectStatusAndTimestamps_WhenCreatingTask() FAILED
+    java.lang.NullPointerException at TaskServiceTest.java:196
+
+TaskServiceInMemoryTest > createAndFetchTask() FAILED
+    java.lang.IllegalStateException at DefaultCacheAwareContextLoaderDelegate.java:180
+        Caused by: org.springframework.beans.factory.BeanCreationException at AbstractBeanFactory.java:328
+            Caused by: org.springframework.beans.factory.BeanCreationException at AbstractAutowireCapableBeanFactory.java:1826
+                Caused by: org.flywaydb.core.internal.command.DbMigrate$FlywayMigrateException at DbMigrate.java:382
+                    Caused by: org.flywaydb.core.internal.sqlscript.FlywaySqlScriptException at DefaultSqlScriptExecutor.java:267
+                        Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException at DbException.java:514
+
+2025-09-26T20:39:21.259+03:00  INFO 31412 --- [taskmanager] [ntContainer#0-2] o.s.a.r.l.SimpleMessageListenerContainer : Waiting for workers to finish.
+2025-09-26T20:39:21.709+03:00  INFO 31412 --- [taskmanager] [ntContainer#0-2] o.s.a.r.l.SimpleMessageListenerContainer : Successfully waited for workers to finish.
+2025-09-26T20:39:21.730+03:00  INFO 31412 --- [taskmanager] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+Hibernate: set client_min_messages = WARNING
+2025-09-26T20:39:21.731+03:00 ERROR 31412 --- [taskmanager] [ionShutdownHook] .SchemaDropperImpl$DelayedDropActionImpl : HHH000478: Unsuccessful: set client_min_messages = WARNING
+Hibernate: drop table if exists notifications cascade
+Hibernate: drop table if exists tasks cascade
+Hibernate: drop table if exists users cascade
+2025-09-26T20:39:21.734+03:00  INFO 31412 --- [taskmanager] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown initiated...
+2025-09-26T20:39:21.735+03:00  INFO 31412 --- [taskmanager] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Shutdown completed.
+
+> Task :test FAILED
+
+[Incubating] Problems report is available at: file:///Users/alinatsrkova/taskmanager/taskmanager/build/reports/problems/problems-report.html
+4 actionable tasks: 3 executed, 1 up-to-date

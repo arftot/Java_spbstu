@@ -4,6 +4,8 @@ import com.alina.taskmanager.dto.CreateTaskRequest;
 import com.alina.taskmanager.entity.TaskEntity;
 import com.alina.taskmanager.entity.UserEntity;
 import com.alina.taskmanager.exception.ResourceNotFoundException;
+import com.alina.taskmanager.exception.TaskServiceException;
+import com.alina.taskmanager.messaging.TaskPublisher;
 import com.alina.taskmanager.model.Task;
 import com.alina.taskmanager.model.TaskStatus;
 import com.alina.taskmanager.repository.TaskJpaRepository;
@@ -36,6 +38,9 @@ class TaskServiceTest {
 
     @Mock
     private UserJpaRepository userRepository;
+
+    @Mock
+    private TaskPublisher taskPublisher;
 
     @InjectMocks
     private TaskServiceImpl taskService;
@@ -86,6 +91,7 @@ class TaskServiceTest {
         // Given
         when(userRepository.findById("user-id")).thenReturn(Optional.of(userEntity));
         when(taskRepository.save(any(TaskEntity.class))).thenReturn(taskEntity);
+        doNothing().when(taskPublisher).publishTask(any(Task.class));
 
         // When
         Task result = taskService.createTask(createTaskRequest);
@@ -105,7 +111,7 @@ class TaskServiceTest {
         when(userRepository.findById("user-id")).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(TaskServiceException.class, () -> {
             taskService.createTask(createTaskRequest);
         });
         verify(userRepository, times(1)).findById("user-id");
@@ -175,7 +181,7 @@ class TaskServiceTest {
         when(taskRepository.findById("nonexistent-id")).thenReturn(Optional.empty());
 
         // When & Then
-        assertThrows(ResourceNotFoundException.class, () -> {
+        assertThrows(TaskServiceException.class, () -> {
             taskService.deleteTask("nonexistent-id");
         });
         verify(taskRepository, times(1)).findById("nonexistent-id");
@@ -191,6 +197,7 @@ class TaskServiceTest {
             entity.setId("generated-task-id");
             return entity;
         });
+        doNothing().when(taskPublisher).publishTask(any(Task.class));
 
         // When
         Task result = taskService.createTask(createTaskRequest);

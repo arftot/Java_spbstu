@@ -49,7 +49,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - SPRING_PROFILES_ACTIVE=scheduling
+      - SPRING_PROFILES_ACTIVE=scheduling,redis,postgres
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/taskdb
       - SPRING_DATASOURCE_USERNAME=taskuser
       - SPRING_DATASOURCE_PASSWORD=taskpass

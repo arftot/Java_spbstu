@@ -3,6 +3,7 @@ package com.alina.taskmanager.service;
 import com.alina.taskmanager.dto.CreateTaskRequest;
 import com.alina.taskmanager.entity.TaskEntity;
 import com.alina.taskmanager.entity.UserEntity;
+import com.alina.taskmanager.messaging.TaskPublisher;
 import com.alina.taskmanager.model.Task;
 import com.alina.taskmanager.model.TaskStatus;
 import com.alina.taskmanager.repository.TaskJpaRepository;
@@ -32,6 +33,9 @@ class TaskServiceCacheTest {
 
     @Mock
     private UserJpaRepository userRepository;
+
+    @Mock
+    private TaskPublisher taskPublisher;
 
     @InjectMocks
     private TaskServiceImpl taskService;
@@ -101,6 +105,7 @@ class TaskServiceCacheTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(taskRepository.save(any(TaskEntity.class))).thenReturn(testTask1);
+        doNothing().when(taskPublisher).publishTask(any(Task.class));
 
         // When
         Task result = taskService.createTask(request);
