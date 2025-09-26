@@ -10,6 +10,8 @@ import com.alina.taskmanager.model.User;
 import com.alina.taskmanager.repository.TaskJpaRepository;
 import com.alina.taskmanager.repository.UserJpaRepository;
 import com.alina.taskmanager.service.TaskService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,6 +28,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"tasks", "tasksPending"}, key = "#request.userId")
     public Task createTask(CreateTaskRequest request) {
         UserEntity user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + request.getUserId()));
@@ -42,6 +45,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Cacheable(cacheNames = "tasks", key = "#userId", unless = "#result == null || #result.isEmpty()")
     public List<Task> getTasksByUser(String userId) {
         return taskRepository.findByUserIdAndDeletedFalse(userId).stream()
                 .map(TaskEntity::toModel)
@@ -49,6 +53,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Cacheable(cacheNames = "tasksPending", key = "#userId", unless = "#result == null || #result.isEmpty()")
     public List<Task> getPendingTasksByUser(String userId) {
         return taskRepository.findByUserIdAndDeletedFalse(userId).stream()
                 .filter(task -> task.getStatus() == TaskStatus.PENDING)
@@ -57,6 +62,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"tasks", "tasksPending"}, key = "#taskEntity.userId")
     public void deleteTask(String id) {
         TaskEntity taskEntity = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + id));
