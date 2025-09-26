@@ -1,6 +1,7 @@
 package com.alina.taskmanager.repository.jpa;
 
 import com.alina.taskmanager.entity.TaskEntity;
+import com.alina.taskmanager.entity.UserEntity;
 import com.alina.taskmanager.model.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +21,23 @@ class SpringTaskJpaRepositoryTest {
 
     @Autowired
     private SpringTaskJpaRepository repository;
+    
+    @Autowired
+    private SpringUserJpaRepository userRepository;
 
     private TaskEntity testTask;
+    private UserEntity testUser;
 
     @BeforeEach
     void setUp() {
+        // Create a test user first
+        testUser = new UserEntity();
+        testUser.setId("user-123");
+        testUser.setUsername("testuser");
+        testUser.setDisplayName("Test User");
+        testUser.setCreatedAt(LocalDateTime.now());
+        userRepository.save(testUser);
+        
         testTask = new TaskEntity();
         testTask.setUserId("user-123");
         testTask.setTitle("Test Task");

@@ -1,12 +1,14 @@
 package com.alina.taskmanager.service;
 
 import com.alina.taskmanager.dto.CreateTaskRequest;
+import com.alina.taskmanager.entity.TaskEntity;
+import com.alina.taskmanager.entity.UserEntity;
 import com.alina.taskmanager.exception.ResourceNotFoundException;
 import com.alina.taskmanager.model.Task;
 import com.alina.taskmanager.model.TaskStatus;
-import com.alina.taskmanager.model.User;
-import com.alina.taskmanager.repository.TaskRepository;
-import com.alina.taskmanager.repository.UserRepository;
+import com.alina.taskmanager.repository.TaskJpaRepository;
+import com.alina.taskmanager.repository.UserJpaRepository;
+import com.alina.taskmanager.service.impl.TaskServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,138 +17,187 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TaskServiceTest {
 
     @Mock
-    private TaskRepository taskRepository;
+    private TaskJpaRepository taskRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserJpaRepository userRepository;
 
     @InjectMocks
-    private com.alina.taskmanager.service.impl.TaskServiceImpl taskService;
+    private TaskServiceImpl taskService;
 
     private CreateTaskRequest createTaskRequest;
-    private User testUser;
-    private Task testTask;
+    private UserEntity userEntity;
+    private TaskEntity taskEntity;
+    private TaskEntity pendingTaskEntity;
+    private TaskEntity completedTaskEntity;
 
     @BeforeEach
     void setUp() {
-        testUser = new User();
-        testUser.setId("user-123");
-        testUser.setUsername("testuser");
-
         createTaskRequest = new CreateTaskRequest();
-        createTaskRequest.setUserId("user-123");
+        createTaskRequest.setUserId("user-id");
         createTaskRequest.setTitle("Test Task");
         createTaskRequest.setDescription("Test Description");
-        createTaskRequest.setDueDate(Instant.now().plusSeconds(3600));
+        createTaskRequest.setDueDate(Instant.now().plusSeconds(86400)); // 1 day from now
 
-        testTask = new Task();
-        testTask.setId("task-123");
-        testTask.setUserId("user-123");
-        testTask.setTitle("Test Task");
-        testTask.setDescription("Test Description");
-        testTask.setStatus(TaskStatus.PENDING);
-        testTask.setCreatedAt(Instant.now());
-        testTask.setDueDate(Instant.now().plusSeconds(3600));
+        userEntity = new UserEntity();
+        userEntity.setId("user-id");
+        userEntity.setUsername("testuser");
+
+        taskEntity = new TaskEntity();
+        taskEntity.setId("task-id");
+        taskEntity.setUserId("user-id");
+        taskEntity.setTitle("Test Task");
+        taskEntity.setDescription("Test Description");
+        taskEntity.setStatus(TaskStatus.PENDING);
+        taskEntity.setDeleted(false);
+
+        pendingTaskEntity = new TaskEntity();
+        pendingTaskEntity.setId("pending-task-id");
+        pendingTaskEntity.setUserId("user-id");
+        pendingTaskEntity.setTitle("Pending Task");
+        pendingTaskEntity.setStatus(TaskStatus.PENDING);
+        pendingTaskEntity.setDeleted(false);
+
+        completedTaskEntity = new TaskEntity();
+        completedTaskEntity.setId("completed-task-id");
+        completedTaskEntity.setUserId("user-id");
+        completedTaskEntity.setTitle("Completed Task");
+        completedTaskEntity.setStatus(TaskStatus.COMPLETED);
+        completedTaskEntity.setDeleted(false);
     }
 
     @Test
-    void createTask_ShouldReturnCreatedTask_WhenValidRequest() {
-        when(userRepository.findById("user-123")).thenReturn(Optional.of(testUser));
-        when(taskRepository.save(any(Task.class))).thenReturn(testTask);
+    void createTask_ShouldCreateAndReturnTask_WhenValidRequest() {
+        // Given
+        when(userRepository.findById("user-id")).thenReturn(Optional.of(userEntity));
+        when(taskRepository.save(any(TaskEntity.class))).thenReturn(taskEntity);
 
+        // When
         Task result = taskService.createTask(createTaskRequest);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getTitle()).isEqualTo("Test Task");
-        assertThat(result.getUserId()).isEqualTo("user-123");
-        assertThat(result.getStatus()).isEqualTo(TaskStatus.PENDING);
-        verify(userRepository).findById("user-123");
-        verify(taskRepository).save(any(Task.class));
+        // Then
+        assertNotNull(result);
+        assertEquals("Test Task", result.getTitle());
+        assertEquals("Test Description", result.getDescription());
+        assertEquals(TaskStatus.PENDING, result.getStatus());
+        verify(userRepository, times(1)).findById("user-id");
+        verify(taskRepository, times(1)).save(any(TaskEntity.class));
     }
 
     @Test
     void createTask_ShouldThrowException_WhenUserNotFound() {
-        when(userRepository.findById("nonexistent-user")).thenReturn(Optional.empty());
+        // Given
+        when(userRepository.findById("user-id")).thenReturn(Optional.empty());
 
-        createTaskRequest.setUserId("nonexistent-user");
-
-        assertThatThrownBy(() -> taskService.createTask(createTaskRequest))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessageContaining("User not found");
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            taskService.createTask(createTaskRequest);
+        });
+        verify(userRepository, times(1)).findById("user-id");
+        verify(taskRepository, never()).save(any(TaskEntity.class));
     }
 
     @Test
-    void getTasksByUser_ShouldReturnTasks_WhenUserExists() {
-        List<Task> tasks = Arrays.asList(testTask);
-        when(taskRepository.findByUserId("user-123")).thenReturn(tasks);
+    void getTasksByUser_ShouldReturnNonDeletedTasks_WhenUserHasTasks() {
+        // Given
+        List<TaskEntity> taskEntities = Arrays.asList(taskEntity, pendingTaskEntity, completedTaskEntity);
+        when(taskRepository.findByUserIdAndDeletedFalse("user-id")).thenReturn(taskEntities);
 
-        List<Task> result = taskService.getTasksByUser("user-123");
+        // When
+        List<Task> result = taskService.getTasksByUser("user-id");
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getTitle()).isEqualTo("Test Task");
-        verify(taskRepository).findByUserId("user-123");
+        // Then
+        assertEquals(3, result.size());
+        verify(taskRepository, times(1)).findByUserIdAndDeletedFalse("user-id");
     }
 
     @Test
     void getTasksByUser_ShouldReturnEmptyList_WhenUserHasNoTasks() {
-        when(taskRepository.findByUserId("user-123")).thenReturn(Arrays.asList());
+        // Given
+        when(taskRepository.findByUserIdAndDeletedFalse("user-id")).thenReturn(Arrays.asList());
 
-        List<Task> result = taskService.getTasksByUser("user-123");
+        // When
+        List<Task> result = taskService.getTasksByUser("user-id");
 
-        assertThat(result).isEmpty();
-        verify(taskRepository).findByUserId("user-123");
+        // Then
+        assertTrue(result.isEmpty());
+        verify(taskRepository, times(1)).findByUserIdAndDeletedFalse("user-id");
     }
 
     @Test
-    void getPendingTasksByUser_ShouldReturnPendingTasks_WhenUserExists() {
-        List<Task> pendingTasks = Arrays.asList(testTask);
-        when(taskRepository.findByUserIdAndStatusNotDeleted("user-123", TaskStatus.PENDING))
-                .thenReturn(pendingTasks);
+    void getPendingTasksByUser_ShouldReturnOnlyPendingTasks_WhenUserHasMixedTasks() {
+        // Given
+        List<TaskEntity> taskEntities = Arrays.asList(pendingTaskEntity, completedTaskEntity);
+        when(taskRepository.findByUserIdAndDeletedFalse("user-id")).thenReturn(taskEntities);
 
-        List<Task> result = taskService.getPendingTasksByUser("user-123");
+        // When
+        List<Task> result = taskService.getPendingTasksByUser("user-id");
 
-        assertThat(result).hasSize(1);
-        assertThat(result.get(0).getStatus()).isEqualTo(TaskStatus.PENDING);
-        verify(taskRepository).findByUserIdAndStatusNotDeleted("user-123", TaskStatus.PENDING);
+        // Then
+        assertEquals(1, result.size());
+        assertEquals(TaskStatus.PENDING, result.get(0).getStatus());
+        verify(taskRepository, times(1)).findByUserIdAndDeletedFalse("user-id");
     }
 
     @Test
-    void deleteTask_ShouldCallRepository_WhenTaskExists() {
-        taskService.deleteTask("task-123");
+    void deleteTask_ShouldMarkTaskAsDeleted_WhenTaskExists() {
+        // Given
+        when(taskRepository.findById("task-id")).thenReturn(Optional.of(taskEntity));
+        when(taskRepository.save(any(TaskEntity.class))).thenReturn(taskEntity);
 
-        verify(taskRepository).deleteById("task-123");
+        // When
+        taskService.deleteTask("task-id");
+
+        // Then
+        assertTrue(taskEntity.isDeleted());
+        verify(taskRepository, times(1)).findById("task-id");
+        verify(taskRepository, times(1)).save(taskEntity);
     }
 
     @Test
-    void createTask_ShouldSetCorrectFields_WhenValidRequest() {
-        when(userRepository.findById("user-123")).thenReturn(Optional.of(testUser));
-        when(taskRepository.save(any(Task.class))).thenAnswer(invocation -> {
-            Task task = invocation.getArgument(0);
-            task.setId("task-123");
-            return task;
+    void deleteTask_ShouldThrowException_WhenTaskNotFound() {
+        // Given
+        when(taskRepository.findById("nonexistent-id")).thenReturn(Optional.empty());
+
+        // When & Then
+        assertThrows(ResourceNotFoundException.class, () -> {
+            taskService.deleteTask("nonexistent-id");
+        });
+        verify(taskRepository, times(1)).findById("nonexistent-id");
+        verify(taskRepository, never()).save(any(TaskEntity.class));
+    }
+
+    @Test
+    void createTask_ShouldSetCorrectStatusAndTimestamps_WhenCreatingTask() {
+        // Given
+        when(userRepository.findById("user-id")).thenReturn(Optional.of(userEntity));
+        when(taskRepository.save(any(TaskEntity.class))).thenAnswer(invocation -> {
+            TaskEntity entity = invocation.getArgument(0);
+            entity.setId("generated-task-id");
+            return entity;
         });
 
+        // When
         Task result = taskService.createTask(createTaskRequest);
 
-        assertThat(result.getUserId()).isEqualTo("user-123");
-        assertThat(result.getTitle()).isEqualTo("Test Task");
-        assertThat(result.getDescription()).isEqualTo("Test Description");
-        assertThat(result.getStatus()).isEqualTo(TaskStatus.PENDING);
-        assertThat(result.getCreatedAt()).isNotNull();
+        // Then
+        assertEquals(TaskStatus.PENDING, result.getStatus());
+        assertFalse(result.isDeleted());
+        verify(taskRepository, times(1)).save(any(TaskEntity.class));
     }
 }
