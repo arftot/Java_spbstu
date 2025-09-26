@@ -1,6 +1,7 @@
 package com.alina.taskmanager.repository.jpa;
 
 import com.alina.taskmanager.entity.NotificationEntity;
+import com.alina.taskmanager.entity.UserEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,23 @@ class SpringNotificationJpaRepositoryTest {
 
     @Autowired
     private SpringNotificationJpaRepository repository;
+    
+    @Autowired
+    private SpringUserJpaRepository userRepository;
 
     private NotificationEntity testNotification;
+    private UserEntity testUser;
 
     @BeforeEach
     void setUp() {
+        // Create a test user first
+        testUser = new UserEntity();
+        testUser.setId("user-123");
+        testUser.setUsername("testuser");
+        testUser.setDisplayName("Test User");
+        testUser.setCreatedAt(LocalDateTime.now());
+        userRepository.save(testUser);
+        
         testNotification = new NotificationEntity();
         testNotification.setUserId("user-123");
         testNotification.setMessage("Test notification");

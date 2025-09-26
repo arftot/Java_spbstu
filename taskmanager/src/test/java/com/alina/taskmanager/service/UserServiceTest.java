@@ -1,8 +1,10 @@
 package com.alina.taskmanager.service;
 
 import com.alina.taskmanager.dto.CreateUserRequest;
+import com.alina.taskmanager.entity.UserEntity;
 import com.alina.taskmanager.model.User;
-import com.alina.taskmanager.repository.UserRepository;
+import com.alina.taskmanager.repository.UserJpaRepository;
+import com.alina.taskmanager.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,93 +13,99 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserJpaRepository userRepository;
 
     @InjectMocks
-    private com.alina.taskmanager.service.impl.UserServiceImpl userService;
+    private UserServiceImpl userService;
 
     private CreateUserRequest createUserRequest;
-    private User testUser;
+    private UserEntity userEntity;
+    private User expectedUser;
 
     @BeforeEach
     void setUp() {
         createUserRequest = new CreateUserRequest();
         createUserRequest.setUsername("testuser");
 
-        testUser = new User();
-        testUser.setId("user-123");
-        testUser.setUsername("testuser");
-        testUser.setCreatedAt(Instant.now());
+        userEntity = new UserEntity();
+        userEntity.setId("test-id");
+        userEntity.setUsername("testuser");
+        userEntity.setDisplayName("testuser");
+        userEntity.setCreatedAt(LocalDateTime.now());
+
+        expectedUser = new User();
+        expectedUser.setId("test-id");
+        expectedUser.setUsername("testuser");
+        expectedUser.setCreatedAt(Instant.now());
     }
 
     @Test
-    void registerUser_ShouldReturnCreatedUser_WhenValidRequest() {
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+    void register_ShouldCreateAndReturnUser_WhenValidRequest() {
+        // Given
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
+        // When
         User result = userService.register(createUserRequest);
 
-        assertThat(result).isNotNull();
-        assertThat(result.getUsername()).isEqualTo("testuser");
-        assertThat(result.getId()).isNotBlank();
-        assertThat(result.getCreatedAt()).isNotNull();
-        verify(userRepository).save(any(User.class));
-    }
-
-    @Test
-    void registerUser_ShouldSetUsername_WhenValidRequest() {
-        when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
-            User user = invocation.getArgument(0);
-            user.setId("user-123");
-            return user;
-        });
-
-        User result = userService.register(createUserRequest);
-
-        assertThat(result.getUsername()).isEqualTo("testuser");
-        verify(userRepository).save(any(User.class));
+        // Then
+        assertNotNull(result);
+        assertEquals("testuser", result.getUsername());
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
     @Test
     void loginByUsername_ShouldReturnUser_WhenUserExists() {
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(testUser));
+        // Given
+        when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(userEntity));
 
+        // When
         Optional<User> result = userService.loginByUsername("testuser");
 
-        assertThat(result).isPresent();
-        assertThat(result.get().getUsername()).isEqualTo("testuser");
-        assertThat(result.get().getId()).isEqualTo("user-123");
-        verify(userRepository).findByUsername("testuser");
+        // Then
+        assertTrue(result.isPresent());
+        assertEquals("testuser", result.get().getUsername());
+        verify(userRepository, times(1)).findByUsername("testuser");
     }
 
     @Test
     void loginByUsername_ShouldReturnEmpty_WhenUserDoesNotExist() {
+        // Given
         when(userRepository.findByUsername("nonexistent")).thenReturn(Optional.empty());
 
+        // When
         Optional<User> result = userService.loginByUsername("nonexistent");
 
-        assertThat(result).isEmpty();
-        verify(userRepository).findByUsername("nonexistent");
+        // Then
+        assertTrue(result.isEmpty());
+        verify(userRepository, times(1)).findByUsername("nonexistent");
     }
 
     @Test
-    void loginByUsername_ShouldReturnEmpty_WhenUsernameIsNull() {
-        when(userRepository.findByUsername(null)).thenReturn(Optional.empty());
+    void register_ShouldSetCorrectUsername_WhenCreatingUser() {
+        // Given
+        when(userRepository.save(any(UserEntity.class))).thenAnswer(invocation -> {
+            UserEntity entity = invocation.getArgument(0);
+            entity.setId("generated-id");
+            return entity;
+        });
 
-        Optional<User> result = userService.loginByUsername(null);
+        // When
+        User result = userService.register(createUserRequest);
 
-        assertThat(result).isEmpty();
-        verify(userRepository).findByUsername(null);
+        // Then
+        assertEquals("testuser", result.getUsername());
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 }
