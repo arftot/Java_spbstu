@@ -33,6 +33,9 @@ public class TaskEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private TaskStatus status;
+    
+    @Column(name = "overdue", nullable = false)
+    private boolean overdue = false;
 
     public TaskEntity() {
         this.id = UUID.randomUUID().toString();
@@ -105,6 +108,14 @@ public class TaskEntity {
         this.status = status;
     }
 
+    public boolean isOverdue() {
+        return overdue;
+    }
+
+    public void setOverdue(boolean overdue) {
+        this.overdue = overdue;
+    }
+
     public static TaskEntity fromModel(Task task) {
         TaskEntity entity = new TaskEntity();
         entity.setId(task.getId());
@@ -117,6 +128,7 @@ public class TaskEntity {
             task.getDueDate().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null);
         entity.setDeleted(task.isDeleted());
         entity.setStatus(task.getStatus());
+        entity.setOverdue(task.isOverdue());
         return entity;
     }
 
@@ -132,6 +144,7 @@ public class TaskEntity {
             this.dueDate.atZone(java.time.ZoneId.systemDefault()).toInstant() : null);
         task.setDeleted(this.deleted);
         task.setStatus(this.status);
+        task.setOverdue(this.overdue);
         return task;
     }
 }

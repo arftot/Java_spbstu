@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -75,6 +76,22 @@ public class TaskServiceImpl implements TaskService {
         TaskEntity taskEntity = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + id));
         taskEntity.setDeleted(true);
+        taskRepository.save(taskEntity);
+    }
+
+    @Override
+    public List<Task> getOverdueTasks() {
+        LocalDateTime now = LocalDateTime.now();
+        return taskRepository.findOverdueTasks(now).stream()
+                .map(TaskEntity::toModel)
+                .toList();
+    }
+
+    @Override
+    public void markTaskAsOverdue(String taskId) {
+        TaskEntity taskEntity = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + taskId));
+        taskEntity.setOverdue(true);
         taskRepository.save(taskEntity);
     }
 }

@@ -10,6 +10,8 @@ public interface TaskService {
     List<Task> getTasksByUser(String userId);
     List<Task> getPendingTasksByUser(String userId);
     void deleteTask(String id);
+    List<Task> getOverdueTasks();
+    void markTaskAsOverdue(String taskId);
 }
 
 
