@@ -13,6 +13,7 @@ public class Task {
     private Instant dueDate;
     private boolean deleted;
     private TaskStatus status;
+    private boolean overdue;
 
     public Task() {
         this.id = UUID.randomUUID().toString();
@@ -83,6 +84,14 @@ public class Task {
 
     public void setStatus(TaskStatus status) {
         this.status = status;
+    }
+
+    public boolean isOverdue() {
+        return overdue;
+    }
+
+    public void setOverdue(boolean overdue) {
+        this.overdue = overdue;
     }
 
     @Override
