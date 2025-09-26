@@ -17,6 +17,9 @@ public class NotificationEntity {
     @Column(name = "message", nullable = false, columnDefinition = "TEXT")
     private String message;
     
+    @Column(name = "task_id")
+    private String taskId;
+    
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
     
@@ -57,6 +60,14 @@ public class NotificationEntity {
         this.message = message;
     }
 
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -86,6 +97,7 @@ public class NotificationEntity {
         entity.setId(notification.getId());
         entity.setUserId(notification.getUserId());
         entity.setMessage(notification.getMessage());
+        entity.setTaskId(notification.getTaskId());
         entity.setCreatedAt(notification.getCreatedAt() != null ? 
             notification.getCreatedAt().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime() : null);
         entity.setRead(notification.isRead());
@@ -98,6 +110,7 @@ public class NotificationEntity {
         notification.setId(this.id);
         notification.setUserId(this.userId);
         notification.setMessage(this.message);
+        notification.setTaskId(this.taskId);
         notification.setCreatedAt(this.createdAt != null ? 
             this.createdAt.atZone(java.time.ZoneId.systemDefault()).toInstant() : null);
         notification.setRead(this.read);
