@@ -8,6 +8,7 @@ public class Notification {
     private String id;
     private String userId;
     private String message;
+    private String taskId;
     private Instant createdAt;
     private boolean read;
 
@@ -39,6 +40,14 @@ public class Notification {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public Instant getCreatedAt() {

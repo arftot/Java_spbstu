@@ -4,6 +4,7 @@ import com.alina.taskmanager.dto.CreateTaskRequest;
 import com.alina.taskmanager.entity.TaskEntity;
 import com.alina.taskmanager.entity.UserEntity;
 import com.alina.taskmanager.exception.ResourceNotFoundException;
+import com.alina.taskmanager.messaging.TaskPublisher;
 import com.alina.taskmanager.model.Task;
 import com.alina.taskmanager.model.TaskStatus;
 import com.alina.taskmanager.model.User;
@@ -21,10 +22,12 @@ import java.util.List;
 public class TaskServiceImpl implements TaskService {
     private final TaskJpaRepository taskRepository;
     private final UserJpaRepository userRepository;
+    private final TaskPublisher taskPublisher;
 
-    public TaskServiceImpl(TaskJpaRepository taskRepository, UserJpaRepository userRepository) {
+    public TaskServiceImpl(TaskJpaRepository taskRepository, UserJpaRepository userRepository, TaskPublisher taskPublisher) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.taskPublisher = taskPublisher;
     }
 
     @Override
@@ -41,7 +44,12 @@ public class TaskServiceImpl implements TaskService {
         taskEntity.setStatus(TaskStatus.PENDING);
         taskEntity.setCreatedAt(Instant.now().atZone(java.time.ZoneId.systemDefault()).toLocalDateTime());
         TaskEntity savedEntity = taskRepository.save(taskEntity);
-        return savedEntity.toModel();
+        Task task = savedEntity.toModel();
+        
+        // Publish task creation event
+        taskPublisher.publishTask(task);
+        
+        return task;
     }
 
     @Override

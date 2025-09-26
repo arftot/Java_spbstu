@@ -2,6 +2,7 @@ package com.alina.taskmanager.service.impl;
 
 import com.alina.taskmanager.entity.NotificationEntity;
 import com.alina.taskmanager.model.Notification;
+import com.alina.taskmanager.model.Task;
 import com.alina.taskmanager.repository.NotificationJpaRepository;
 import com.alina.taskmanager.service.NotificationService;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,15 @@ public class NotificationServiceImpl implements NotificationService {
                 .filter(notification -> !notification.isRead())
                 .map(NotificationEntity::toModel)
                 .toList();
+    }
+
+    @Override
+    public Notification createNotificationForTask(Task task) {
+        Notification notification = new Notification();
+        notification.setUserId(task.getUserId());
+        notification.setMessage("New task created: " + task.getTitle());
+        notification.setTaskId(task.getId());
+        return create(notification);
     }
 }
 
